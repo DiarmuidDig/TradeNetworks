@@ -24,7 +24,7 @@ Plots.default(xlims=(0,500))
 # General system config
 mapWidth= 500
 mapHeight = 300
-townNum = 1
+townNum = 14
 traderNum = 1
 numAssets = 1
 
@@ -60,7 +60,7 @@ end
 function aStar(start, finish, links, townList)
     frontier = [[0, start]]    # Priority queue, first in each tuple is the priority and second is the town
     cameFrom = Dict{Int64, Any}(start => nothing)
-    costSoFar = Dict(start => 0)
+    costSoFar = Dict(start => 0.0)
 
     while length(frontier) != 0
 
@@ -85,9 +85,16 @@ function aStar(start, finish, links, townList)
             newCost = costSoFar[current] + links[next, current]
             
             if next ∉ keys(costSoFar) || newCost < costSoFar[next]
-                
-                costSoFar[next] = newCost
-                priority = newCost + heuristicCost(next, finish, townList)
+                costSoFar[next] = floor(newCost)
+                #println("Cost so far = " * string(costSoFar[next]))
+                #println("newCost = " * string(newCost))
+
+                priority = floor(newCost) + heuristicCost(next, finish, townList)
+                #println("heuristic = " * string(heuristicCost(next, finish, townList)))
+                #println("frontier = " * string(frontier))
+                #println("priority = " * string(priority))
+                #println("next = " * string(next))
+
                 push!(frontier, [priority, next])
                 cameFrom[next] = current
             end
@@ -177,7 +184,7 @@ function drawNetwork(towns, links, traderList)
     for i in range(1, length(towns))
         scatter!([towns[i]["x"]], [towns[i]["y"]], color="blue")    
         for j in range(1, length(towns))
-            if links[i,j]  != 0
+            if floor(links[i,j])  != 0
                 plot!([towns[i]["x"], towns[j]["x"]], [towns[i]["y"], towns[j]["y"]], color="blue")
             end
         end
@@ -230,11 +237,14 @@ function addConnections(links, distances, meanDist)
     return links
 end
 
+# Something going wrong here, looks like all entries are being set as distances rather than jsut the nonzero entries
+# Try setting links[i,j] = floor[links[i,j]] before checking zero?
 # Take links (binary with 1 representing a link between towns and 0 meaning none) and combine it with
 # distances so that each link is now the distance between the two towns (0 still means no link)
 function addDistancesToLinks(links, distances)
     for i in range(1,Int(sqrt(length(links))))
         for j in range(1,i)
+            links[i,j] = floor(links[i,j])
             if links[i,j] != 0
                 links[i,j] = distances[i,j]
                 links[j,i] = distances[i,j]
@@ -348,7 +358,7 @@ function generateWorldMapNetwork(townN)
 
     # Convert links from binary 1 = link, 0 = no link to storing the distance between the towns (0 still = no link)
     links = addDistancesToLinks(links, distanceMatrix)
-
+    println(links)
     return townList, links, distanceMatrix, 1
 end
 
@@ -584,10 +594,10 @@ for i in range(1,animFrameCount)
 end
 
 #println("townlen = " * string(length(townList[1]{"Nhistory"})))
-plot(range(1,animFrameCount+delayLength), townList[1]["Nhistory"])
-plot(range(1,animFrameCount+delayLength), townList[1]["Nhistory"] .* townList[1]["Phistory"][1])
-gui()
-readline()
+#plot(range(1,animFrameCount+delayLength), townList[1]["Nhistory"])
+#plot(range(1,animFrameCount+delayLength), townList[1]["Nhistory"] .* townList[1]["Phistory"][1])
+#gui()
+#readline()
 
 # I think we might need to refactor this. Switch it to store a list of
 # coordinates at each timestep, that'll show the overall progression over time while just having one x and
@@ -601,6 +611,6 @@ readline()
     #end
 end 
 gif(anim, "testAnimation.gif", fps=50) =#
-#drawNetwork(townList, links, traderList)
-#gui()
-#readline()
+drawNetwork(townList, links, traderList)
+gui()
+readline()
