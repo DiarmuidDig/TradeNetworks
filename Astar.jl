@@ -43,7 +43,7 @@ function aStar(start, finish, links, townList)
         # I'd say there's a better way of finding the possibilities but this'll do
         #println(current)
         for i in range(1, length(links[current,:]))
-            if links[current,i] != 0
+            if floor(links[current,i]) != 0
                 push!(possibleNextTowns, i)
             end
         end

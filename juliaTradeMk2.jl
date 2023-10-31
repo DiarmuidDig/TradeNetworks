@@ -25,11 +25,12 @@ Plots.default(xlims=(0,500))
 
 include("Astar.jl")
 include("WorldGen.jl")
+include("TraderManager.jl")
 
 # General system config
 mapWidth= 500
 mapHeight = 300
-townNum = 14
+townNum = 10
 traderNum = 1
 numAssets = 1
 
@@ -101,6 +102,7 @@ function updateTownPopulation(town)
     newN = last(town["Nhistory"]) + Nincrement
 
     #println("newN = " * string(newN))
+
     #println("N = " * string(last(town["Nhistory"])))
     #println("Nincrement = " * string(Nincrement))
     #println("town = " * string(town))
@@ -268,7 +270,7 @@ traderList = instantiateTraders(townList, traderNum)
 # I'm missing something about how Julia handles parameters and scope because nothing is being returned here so
 # the fact that it's still changing the outcome means something is being mutated
 animFrameCount = 400
-println(townList[1])
+#println(townList[1])
 for i in range(1,animFrameCount)
     #tradersTick(traderList, links, townList)
     townTick(townList)

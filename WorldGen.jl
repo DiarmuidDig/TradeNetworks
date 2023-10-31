@@ -108,7 +108,7 @@ function addConnections(links, distances, meanDist)
              
             #= Pseudocode: base probability that a link is added between two towns = 0.5
                            scale base probability by comparison to mean distance =#
-            probLinkAdded = 0.5
+            probLinkAdded = 0.05
             
             probLinkAdded = probLinkAdded / (distances[Int(i),Int(j)]/meanDist)
 
@@ -145,11 +145,13 @@ function ensureContinuous(links, townList, distances)
     start = 1
     for finish in range(2, length(townList))
         cameFrom, costSoFar = aStar(start, finish, links, townList)
-
         # Worth adding a check to see if length = len(townList) or something to save extra loops if possible
-
+        
+        println("Finish = " * string(finish))
+        println("Came from keys = " * string(keys(cameFrom)))
         if finish ∉ keys(cameFrom)
-            #= This is just really cool to see where the frontier is
+            println("discontinuity flagged")
+            # This is just really cool to see where the frontier is
             frontier = Dict()
             for key in keys(cameFrom)
                 if key ∉ values(cameFrom)
@@ -158,23 +160,24 @@ function ensureContinuous(links, townList, distances)
             end
             closestInFrontier = findmin(frontier)[2]
 
-            println("closest in frontier = " * string(closestInFrontier))
-            println("Frontier = " * string(frontier))
+            ##println("closest in frontier = " * string(closestInFrontier))
+            #println("Frontier = " * string(frontier))
             for i in range(1, length(townList))
                 scatter!([townList[i]["x"]], [townList[i]["y"]], color="blue")    
                 for j in range(1, length(townList))
-                    if links[i,j]  != 0
+                    if floor(links[i,j])  != 0
                         plot!([townList[i]["x"], townList[j]["x"]], [townList[i]["y"], townList[j]["y"]], color="blue")
                     end
                 end
             end
             for town in keys(frontier)
+ 
                 scatter!([townList[town]["x"]],[townList[town]["y"]], color="red")
             end
             scatter!([townList[1]["x"]],[townList[1]["y"]], color="orange")
             scatter!([townList[closestInFrontier]["x"]],[townList[closestInFrontier]["y"]], color="yellow")
-            gui()
-            readline() =#
+            #gui()
+            #readline() 
 
             # Find closest in explored region
             closest = start
@@ -183,6 +186,8 @@ function ensureContinuous(links, townList, distances)
                     closest = town
                 end
             end
+
+            println("Closest = " * string(closest))
 
             links[finish, closest] = 1.0
             links[closest, finish] = 1.0
@@ -224,6 +229,24 @@ function generateWorldMapNetwork(townNum, mapWidth, mapHeight)
     # Improve the network a bit by using a metropolis check to add new links between towns based on distance
     # between the towns vs mean distance between every pair of towns
     links = addConnections(links, distanceMatrix, meanDistance)
+
+
+    #=town = Dict("x" => Random.rand(range(1,mapWidth)),
+                    "y" => Random.rand(range(1,mapHeight)),
+
+                    "population" => 1,
+                    "money" => Random.rand(range(1,maxInitMoney)),
+
+                    "conRates"  => Random.rand(range(0.5,maxConPerPerson), numAssets),
+                    "prodRates" => 1,
+
+                    "rP" => Random.rand(range(0.01,maxrP), numAssets),
+                    "maxProdRatesPerPerson" => [Random.rand(range(1, maxProdRatePerPerson)) for i in 1:numAssets],
+                    #"maxAbsoluteProdRates" => Random.rand(range(1.0, maxAbsoluteProdRate), numAssets),
+                    
+                    "Nhistory" => [1 for i in 1:delayLength],
+                    "Phistory" => [1 for i in 1:delayLength])
+    push!(townList, town)=#
 
     # Make sure all towns are reachable, i.e. whole network is continuous
     links = ensureContinuous(links, townList, distanceMatrix)
