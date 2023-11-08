@@ -108,7 +108,7 @@ function addConnections(links, distances, meanDist)
              
             #= Pseudocode: base probability that a link is added between two towns = 0.5
                            scale base probability by comparison to mean distance =#
-            probLinkAdded = 0.05
+            probLinkAdded = 0.25
             
             probLinkAdded = probLinkAdded / (distances[Int(i),Int(j)]/meanDist)
 
