@@ -36,6 +36,10 @@ end
 #---------------------------------------- Animation ---------------------------------------
 #------------------------------------------------------------------------------------------
 
+
+# I think it would be good to refactor this. Switch it to store a list of
+# coordinates at each timestep, that'll show the overall progression over time while just having one x and
+# one y to deal with, that can be plugged straight in to show the whole system without looping though traders
 function generateAnimationGif(townList, links, traderList)
     anim = @animate for i = 1:animFrameCount
         drawNetwork(townList, links)

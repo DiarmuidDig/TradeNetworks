@@ -150,34 +150,15 @@ traderList = instantiateTraders(townList, traderNum)
 # Have a look at the variables here, I thought I was being very functional with my design patterns but I think
 # I'm missing something about how Julia handles parameters and scope because nothing is being returned here so
 # the fact that it's still changing the outcome means something is being mutated
-animFrameCount = 100
-#println(townList[1])
-for i in range(1,animFrameCount)
-    tradersTick(traderList, links, townList)
-    townTick(townList)
-    #println(traderList[1]["state"])
+
+function runSimulation(duration)
+    for i in range(1,duration)
+        tradersTick(traderList, links, townList)
+        townTick(townList)
+    end
 end
 
-#println("townlen = " * string(length(townList[1]{"Nhistory"})))
-#plot(range(1,animFrameCount+delayLength), townList[1]["Nhistory"])
-#plot(range(1,animFrameCount+delayLength), townList[1]["Nhistory"] .* townList[1]["Phistory"][1])
-#gui()
-#readline()
+animFrameCount = 100
+runSimulation(animFrameCount)
 
-# I think we might need to refactor this. Switch it to store a list of
-# coordinates at each timestep, that'll show the overall progression over time while just having one x and
-# one y to deal with, that can be plugged straight in to show the whole system without looping though traders
-
-#=anim = @animate for i = 1:animFrameCount
-    drawNetwork(townList, links)
-    #scatter!(range(1,animFrameCount), [townList[1]["populationHistory"][i]])
-    scatter!([townList[traderList[1]["finalTargetHistory"][i]]["x"]], [townList[traderList[1]["finalTargetHistory"][i]]["y"]], color="orange")
-    for trader in traderList
-        scatter!((trader["xPositionHistory"][i], trader["yPositionHistory"][i]), color="red")
-    end
-end 
-gif(anim, "testAnimation.gif", fps=50) =#
 generateAnimationGif(townList, links, traderList)
-#drawNetwork(townList, links)
-#gui()
-#readline()
