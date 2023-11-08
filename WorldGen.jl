@@ -65,18 +65,6 @@ function findNearestTowns(towns, links)
     return links
 end
 
-# Loop through townList and link matrix and plot it
-function drawNetwork(towns, links, traderList)
-    scatter(0,0)
-    for i in range(1, length(towns))
-        scatter!([towns[i]["x"]], [towns[i]["y"]], color="blue")    
-        for j in range(1, length(towns))
-            if floor(links[i,j])  != 0
-                plot!([towns[i]["x"], towns[j]["x"]], [towns[i]["y"], towns[j]["y"]], color="blue")
-            end
-        end
-    end
-end
 
 # Generate a matrix storing the distance between every pair of towns (more efficient to
 # do this once at the start so doing it now)

@@ -13,11 +13,7 @@
 # Track the imprecision error all the back and fix it at the root
 # Decide on trader behaviour
 
-# Break all the messy functions I have here up into separate packages I can call as needed, clean tehm up while transferring htem, maybe nail down design and functionalities while i'm at it
 
-
-
- #Starting today, comment the trader stuff here and make sureit runs right only using the stuff in the separate file
 using Random
 using Plots
 using Statistics
@@ -29,6 +25,7 @@ Plots.default(xlims=(0,500))
 include("Astar.jl")
 include("WorldGen.jl")
 include("TraderManager.jl")
+include("GraphicsStuff.jl")
 
 # General system config
 mapWidth= 500
@@ -153,10 +150,10 @@ traderList = instantiateTraders(townList, traderNum)
 # Have a look at the variables here, I thought I was being very functional with my design patterns but I think
 # I'm missing something about how Julia handles parameters and scope because nothing is being returned here so
 # the fact that it's still changing the outcome means something is being mutated
-animFrameCount = 400
+animFrameCount = 100
 #println(townList[1])
 for i in range(1,animFrameCount)
-    #tradersTick(traderList, links, townList)
+    tradersTick(traderList, links, townList)
     townTick(townList)
     #println(traderList[1]["state"])
 end
@@ -170,15 +167,17 @@ end
 # I think we might need to refactor this. Switch it to store a list of
 # coordinates at each timestep, that'll show the overall progression over time while just having one x and
 # one y to deal with, that can be plugged straight in to show the whole system without looping though traders
-#= anim = @animate for i = 1:animFrameCount
-    #drawNetwork(townList, links, traderList)
-    scatter!(range(1,animFrameCount), [townList[1]["populationHistory"][i]])
-    #scatter!([townList[traderList[1]["finalTargetHistory"][i]]["x"]], [townList[traderList[1]["finalTargetHistory"][i]]["y"]], color="orange")
-    #for trader in traderList
-    #    scatter!((trader["xPositionHistory"][i], trader["yPositionHistory"][i]), color="red")
-    #end
+
+#=anim = @animate for i = 1:animFrameCount
+    drawNetwork(townList, links)
+    #scatter!(range(1,animFrameCount), [townList[1]["populationHistory"][i]])
+    scatter!([townList[traderList[1]["finalTargetHistory"][i]]["x"]], [townList[traderList[1]["finalTargetHistory"][i]]["y"]], color="orange")
+    for trader in traderList
+        scatter!((trader["xPositionHistory"][i], trader["yPositionHistory"][i]), color="red")
+    end
 end 
 gif(anim, "testAnimation.gif", fps=50) =#
-drawNetwork(townList, links, traderList)
-gui()
-readline()
+generateAnimationGif(townList, links, traderList)
+#drawNetwork(townList, links)
+#gui()
+#readline()
