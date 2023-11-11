@@ -158,7 +158,9 @@ function runSimulation(duration)
     end
 end
 
-animFrameCount = 100
+animFrameCount = 500
 runSimulation(animFrameCount)
+
+drawTownHistory(1, townList)
 
 generateAnimationGif(townList, links, traderList)

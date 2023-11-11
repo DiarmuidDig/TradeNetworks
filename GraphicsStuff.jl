@@ -34,17 +34,25 @@ end
 #= I'm pretty sure this is in no way how multiple dispatch is meant to be used. I'm fully aware that this is going to
 be unreadable and I'll forget these different versions of the method in a day but I want to start using it to learn
 and this is a good opportunity to do it badly so I can do it better next time. =#
+# Also probably worth looking at passing the towns themselves as opposed to indices and having to pass all of townList at the same time
 
 # When a town and number are given, take the number as the index of an asset in assetList to be plotted for just that town
 function drawTownHistory(town, asset::Number, townList)
-    plot(range(1,length(town["Nhistory"]), ))
+    #townToPlot = townList[town]
+    #assetHistory  = townToPlot[]
+    #plot(range(1,length(town["Nhistory"]), ))
 
 
 
 end
 
 # When just a town is given, take it that the population history of that town should be plotted
-function drawTownHistory(town, townList)
+function drawTownHistory(town::Number, townList)
+    townToPlot = townList[town]
+    plot(range(1,length(townToPlot["Nhistory"])), townToPlot["Nhistory"])
+    print("ran")
+    gui()
+    readline()
 
 end
 
