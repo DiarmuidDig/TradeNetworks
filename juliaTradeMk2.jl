@@ -30,7 +30,7 @@ include("GraphicsStuff.jl")
 # General system config
 mapWidth= 500
 mapHeight = 300
-townNum = 10
+townNum = 2
 traderNum = 1
 numAssets = 1
 
@@ -161,6 +161,6 @@ end
 animFrameCount = 500
 runSimulation(animFrameCount)
 
-drawTownHistory(1, townList)
+drawTownHistory(townList)
 
-generateAnimationGif(townList, links, traderList)
+#generateAnimationGif(townList, links, traderList)

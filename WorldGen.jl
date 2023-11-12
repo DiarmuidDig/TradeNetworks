@@ -135,12 +135,12 @@ function ensureContinuous(links, townList, distances)
         cameFrom, costSoFar = aStar(start, finish, links, townList)
         # Worth adding a check to see if length = len(townList) or something to save extra loops if possible
         
-        println("Finish = " * string(finish))
-        println("Came from keys = " * string(keys(cameFrom)))
+        #println("Finish = " * string(finish))
+        #println("Came from keys = " * string(keys(cameFrom)))
         if finish ∉ keys(cameFrom)
-            println("discontinuity flagged")
+            println("discontinuity detected during world gen")
             # This is just really cool to see where the frontier is
-            frontier = Dict()
+            #= frontier = Dict()
             for key in keys(cameFrom)
                 if key ∉ values(cameFrom)
                     frontier[key] = costSoFar[key]
@@ -151,7 +151,7 @@ function ensureContinuous(links, townList, distances)
             ##println("closest in frontier = " * string(closestInFrontier))
             #println("Frontier = " * string(frontier))
             for i in range(1, length(townList))
-                scatter!([townList[i]["x"]], [townList[i]["y"]], color="blue")    
+                !([townList[i]["x"]], [townList[i]["y"]], color="blue")    
                 for j in range(1, length(townList))
                     if floor(links[i,j])  != 0
                         plot!([townList[i]["x"], townList[j]["x"]], [townList[i]["y"], townList[j]["y"]], color="blue")
@@ -165,7 +165,7 @@ function ensureContinuous(links, townList, distances)
             scatter!([townList[1]["x"]],[townList[1]["y"]], color="orange")
             scatter!([townList[closestInFrontier]["x"]],[townList[closestInFrontier]["y"]], color="yellow")
             #gui()
-            #readline() 
+            #readline() =#
 
             # Find closest in explored region
             closest = start

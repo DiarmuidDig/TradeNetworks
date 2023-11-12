@@ -38,19 +38,19 @@ and this is a good opportunity to do it badly so I can do it better next time. =
 
 # When a town and number are given, take the number as the index of an asset in assetList to be plotted for just that town
 function drawTownHistory(town, asset::Number, townList)
-    #townToPlot = townList[town]
-    #assetHistory  = townToPlot[]
+    townToPlot = townList[town]
+    assetHistory  = townToPlot[]
     #plot(range(1,length(town["Nhistory"]), ))
 
 
 
 end
 
+# ?? Add a legend or some way to tell which town is which curve but for now it'sfine, htat isn't what needs focus
 # When just a town is given, take it that the population history of that town should be plotted
 function drawTownHistory(town::Number, townList)
     townToPlot = townList[town]
     plot(range(1,length(townToPlot["Nhistory"])), townToPlot["Nhistory"])
-    print("ran")
     gui()
     readline()
 
@@ -59,7 +59,12 @@ end
 # When just a townList is given, take it that the population histories of all towns in the list (not necessarily
 # all towns in the world) should be plotted
 function drawTownHistory(townList)
-
+    xAxis = range(1,length(townList[1]["Nhistory"]))
+    for town in range(1, length(townList))
+        plot!(xAxis, townList[town]["Nhistory"])
+    end
+    gui()
+    readline()
 
 end
 

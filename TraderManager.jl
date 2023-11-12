@@ -32,7 +32,7 @@ function instantiateTraders(townList, traderNum)
                       "currentVector" => [],
                       "xPositionHistory" => [],
                       "yPositionHistory" => [],
-                      "speed" => rand(range(1.5,3,100)))
+                      "speed" => rand(range(5,8,100)))
 
         trader["currentVector"] = [townList[trader["immediateTarget"]]["x"] - townList[townIndex]["x"], 
                                    townList[trader["immediateTarget"]]["y"] - townList[townIndex]["y"]]
