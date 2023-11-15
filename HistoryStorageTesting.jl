@@ -7,7 +7,6 @@ numTowns = 2
 
 initP = Random.rand(range(1.0,maxProdRatePerPerson), numAssets)
 
-# Worth noting that generating the object according to animFrameCount or totalTickNum might be simple for a good efficiency boost
 
 # Setting up a sample container for one town to experiment with (full storage object will 
 # be a list of these, I think)
@@ -61,23 +60,6 @@ println("Phistory for all assets at one tick: " * string(townHistory[2][:,2]))
 # Access Phistory latest Phistory for all assets
 println("Phistory [-1] for all assets: " * string(townHistory[2][:,end]))
 
-
-#= Next, look at initialising it to animFrameCount (want to have both options in case I do need 
-dynamic size at some stage). The bring it all together and create the master storage object with 
-one of these per town and double check that everything above still works. Then, finally, make some
-functions to black-box all this stuff away and let me do it nocely in other scripts =#
-
-# Also very much worth looking at data structures that could hold stuff like this more efficiently
-# but for now I'm happy enough to go with this.
-
-#= Also for dynamic size I think having the N and P chunk separate works (although I'll need to
-test even that to make sure that I'm allowed to have the array and matrix be different widths
-if I want to push to them one at a time during the update process), but if I do go for all zeroes
-at final size that are reassigned as we go that isn't a concern anymore. I could have the first
-row of a matrix for each town be N and the rest P (index offset by +1 from that asset's index in
-assetList). No idea if htat's actually any better/nicer/faster but it is an option. =#
-
-
 # Adding columns
 # Add one value to Nhistory
 townHistory[1] = hcat(townHistory[1], 1.4)
@@ -89,3 +71,36 @@ println("Push to Nhistory: " * string(townHistory[1]))
 # instead of pushing them
 townHistory[2] = hcat(townHistory[2], [2.4; 3.4])
 println("Push to Phistory: " * string(townHistory[2]))
+
+
+
+# Let's see about initialising it to the full final size
+println("Testing initialising the object at full size")
+simDuration = 5  # what's called animFrameCount in the runSim file, the number of ticks in this running
+numAssets = 2
+delayLength = 3
+
+Phistory = zeros(Float32, numAssets, delayLength + simDuration)
+Nhistory = zeros(Float32, 1, delayLength + simDuration)
+#townHistory2 = [Nhistory, Phistory]
+townHistory2 = [zeros(Float32, numAssets, delayLength + simDuration), zeros(Float32, 1, delayLength + simDuration)]
+println("Complete demo object initialised at final size: " * string(townHistory2))
+
+
+
+
+
+#= Next, look at initialising it to animFrameCount (want to have both options in case I do need 
+dynamic size at some stage). Then bring it all together and create the master storage object with 
+one of these per town and double check that everything above still works. Then, finally, make some
+functions to black-box all this stuff away and let me do it nicely in other scripts =#
+
+# Also very much worth looking at data structures that could hold stuff like this more efficiently
+# but for now I'm happy enough to go with this.
+
+#= Also for dynamic size I think having the N and P chunk separate works (although I'll need to
+test even that to make sure that I'm allowed to have the array and matrix be different widths
+if I want to push to them one at a time during the update process), but if I do go for all zeroes
+at final size that are reassigned as we go that isn't a concern anymore. I could have the first
+row of a matrix for each town be N and the rest P (index offset by +1 from that asset's index in
+assetList). No idea if htat's actually any better/nicer/faster but it is an option. =#
