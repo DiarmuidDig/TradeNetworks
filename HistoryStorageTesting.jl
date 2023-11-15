@@ -36,11 +36,21 @@ println("Nhistory of a town = " * string(townHistory[1]))
 # Access Nhistory of a given town at a given tick
 println("Nhistory of a town at time x (x = 2 here): " * string(townHistory[1][2]))
 
+# Access the latest entry in Nhistory
+# This is either the current or most recent non-current value for N
+println("Nhistory[-1]: " * string(last(townHistory[1]))) 
+println("Nhistory[-1]: " * string(townHistory[1][end]))
+
+
 # Access Phistory of all assets in the town
 println("Phistory for all assets: " * string(townHistory[2]))
 
 # Access Phistory for one asset
-println("Phistory for one asset: " * string(townHistory[2][1,:]))
+println("Phistory for one asset: " * string(townHistory[2][2,:]))
+
+# Access the latest Phistory for one asset, see Nhistory[-1] note for what this corresponds to
+println("Phistory[-1] for one asset: " * string(last(townHistory[2][1,:])))
+println("Phistory[-1] for one asset: " * string(townHistory[2][1,end]))
 
 # Access Phistory for one asset at a given tick
 println("Phistory for one asset at a given tick: " * string(townHistory[2][1,2]))
@@ -48,12 +58,13 @@ println("Phistory for one asset at a given tick: " * string(townHistory[2][1,2])
 # Access Phistory for all assets at one tick
 println("Phistory for all assets at one tick: " * string(townHistory[2][:,2]))
 
+# Access Phistory latest Phistory for all assets
+println("Phistory [-1] for all assets: " * string(townHistory[2][:,end]))
 
-#= Next, need to finish out the above docs with how to access the last element of all combos
-(or really just th elast tick, probably). Then figure out the methods for adding columns, then
-look at initialising it to animFrameCount (want to have both options in case I do need dynamic
-size at some stage). The bring it all together and create the master storage object with one
-of these per town and double check that everything above still works. Then, finally, make some
+
+#= Next, look at initialising it to animFrameCount (want to have both options in case I do need 
+dynamic size at some stage). The bring it all together and create the master storage object with 
+one of these per town and double check that everything above still works. Then, finally, make some
 functions to black-box all this stuff away and let me do it nocely in other scripts =#
 
 # Also very much worth looking at data structures that could hold stuff like this more efficiently
@@ -64,4 +75,17 @@ test even that to make sure that I'm allowed to have the array and matrix be dif
 if I want to push to them one at a time during the update process), but if I do go for all zeroes
 at final size that are reassigned as we go that isn't a concern anymore. I could have the first
 row of a matrix for each town be N and the rest P (index offset by +1 from that asset's index in
-assetList). No idea if htat's actually any better/nicer/faster but it is an option.
+assetList). No idea if htat's actually any better/nicer/faster but it is an option. =#
+
+
+# Adding columns
+# Add one value to Nhistory
+townHistory[1] = hcat(townHistory[1], 1.4)
+println("Push to Nhistory: " * string(townHistory[1]))
+
+# Add new set of values to Phistory
+# Have to do it a whole column at a time, can do one value
+# and a column of zeroes but that gets messy with reassigning the other values
+# instead of pushing them
+townHistory[2] = hcat(townHistory[2], [2.4; 3.4])
+println("Push to Phistory: " * string(townHistory[2]))
