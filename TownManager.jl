@@ -5,14 +5,21 @@ Plots.default(legend=false)
 Plots.default(xlims=(0,500))
 #Plots.default(ylims=(0,500))
 
-function generateTownHistoryStorage(townList)
-    
+townHistory = []
+
+function generateTownHistoryStorageObj(townList, delayLength, simDuration)
+    # Empty storage object for one town
+    numAssets = length(townList[1]["prodRates"])
+    storageTemplate = [zeros(Float32, 1, delayLength + simDuration), zeros(Float32, numAssets, delayLength + simDuration)]
+
+
+    townHistories = [storageTemplate for i in range(1, length(townList))]
+    for i in range(1, length(townList))
+        # Set the delay buffer at the start of the storage for each town
+
+        # Population
+        townHistories[i][1][1:delayLength] .= townList[i]["population"]
+        println(townHistories[i][1])
+    end
 
 end
-
-
-#= What's a good method to store the town histories at each step? Let's think about what this object needs
-to handle. It needs to handle
-List of slots, one for each town
-In each town we have a 1D array for the population at each tick
-We also have a matrix for the production rates of the assets, eahc row storing a different asset, each column representing a tick

@@ -1,13 +1,23 @@
 using Random
 
-delayLength = 3
-maxProdRatePerPerson = 10.0
-numAssets = 2
-numTowns = 2
 
-initP = Random.rand(range(1.0,maxProdRatePerPerson), numAssets)
+#= Here we go, a new system to store the full history of the towns at each tick in teh simulation.
+Each town has one of these objects, a list of an array and a matrix. The array stores the population
+of the town at each tick and the matrix stores the production rates, each row storing one asset and
+each column storing the value of that asset at one tick. This can be easily extended to arbitrary size
+(even during the sim, just vcat a row of zeroes to the matrix to add a whole new asset to the system)
+and to expand with the scope of the simulation (can store asset storage histories m.sh. by just
+adding a new matrix).
+How to access each element and type of element is documented below. Only problem with this system is
+that you need to pass the current tick around to index the lists but that's fine. =#
 
+function printTownHistoryDocs()
+    delayLength = 3
+    maxProdRatePerPerson = 10.0
+    numAssets = 2
+    numTowns = 2
 
+    
 # Setting up a sample container for one town to experiment with (full storage object will 
 # be a list of these, I think)
 # The construction methods here are good practice but definitely not going to be the production version
@@ -66,9 +76,9 @@ townHistory[1] = hcat(townHistory[1], 1.4)
 println("Push to Nhistory: " * string(townHistory[1]))
 
 # Add new set of values to Phistory
-# Have to do it a whole column at a time, can do one value
+# Have to do it a whole column at a time with dynamic sizing, can do one value
 # and a column of zeroes but that gets messy with reassigning the other values
-# instead of pushing them
+# instead of pushing them. System below allows for single values
 townHistory[2] = hcat(townHistory[2], [2.4; 3.4])
 println("Push to Phistory: " * string(townHistory[2]))
 
@@ -80,20 +90,20 @@ simDuration = 5  # what's called animFrameCount in the runSim file, the number o
 numAssets = 2
 delayLength = 3
 
-Phistory = zeros(Float32, numAssets, delayLength + simDuration)
-Nhistory = zeros(Float32, 1, delayLength + simDuration)
-#townHistory2 = [Nhistory, Phistory]
-townHistory2 = [zeros(Float32, numAssets, delayLength + simDuration), zeros(Float32, 1, delayLength + simDuration)]
+townHistory2 = [zeros(Float32, 1, delayLength + simDuration), zeros(Float32, numAssets, delayLength + simDuration), ]
 println("Complete demo object initialised at final size: " * string(townHistory2))
 
+# Access elements in the same way as above, just swap out end for the current tick value of the sim
+
+# Assign a whole column of Phistory at once
+testVector = [1.0; 1.0]
+townHistory2[2][:,2] = testVector
+println("Assign a whole column of Phistory at once: " * string(townHistory2))
 
 
+end
 
-
-#= Next, look at initialising it to animFrameCount (want to have both options in case I do need 
-dynamic size at some stage). Then bring it all together and create the master storage object with 
-one of these per town and double check that everything above still works. Then, finally, make some
-functions to black-box all this stuff away and let me do it nicely in other scripts =#
+#printTownHistoryDocs()
 
 # Also very much worth looking at data structures that could hold stuff like this more efficiently
 # but for now I'm happy enough to go with this.

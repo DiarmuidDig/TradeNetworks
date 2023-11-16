@@ -6,6 +6,7 @@ Plots.default(legend=false)
 Plots.default(xlims=(0,500))
 #Plots.default(ylims=(0,500))
 
+include("TownManager.jl")
 
 #------------------------------------------------------------------------------------------
 #--------------------------------- Map Generation -----------------------------------------
@@ -203,9 +204,12 @@ function pathDistanceMatrix(links, townList, distances)
     return returnMatrix
 end
 
-function generateWorldMapNetwork(townNum, mapWidth, mapHeight)
+function generateWorldMapNetwork(townNum, mapWidth, mapHeight, simDuration)
     # Generate list of randomly distributed towns
     townList = generateTownList(townNum, mapWidth, mapHeight)
+
+    # Create storage object to hold the histories of every town at each tick
+    townHistories = generateTownHistoryStorageObj(townList, delayLength, simDuration)
 
     # Create empty matrix of links between towns and loop through it to link each town with its nearest neighbour
     links = Array{Float64}(undef, townNum, townNum)
@@ -243,6 +247,6 @@ function generateWorldMapNetwork(townNum, mapWidth, mapHeight)
 
     # Convert links from binary 1 = link, 0 = no link to storing the distance between the towns (0 still = no link)
     links = addDistancesToLinks(links, distanceMatrix)
-    println(links)
+    #println(links)
     return townList, links, distanceMatrix, 1
 end
