@@ -23,7 +23,7 @@ history stuff from the towns themselves, then
 we're good to go and get back to work on the main stuff! (which is the town update maths and
 then trader behaviour). It's also very worth adding all this to the docs at some stage (the
 world gen stack has been updated with the generate storage object step, how the storage object
-works, all that stuff)
+works, all that stuff) =#
 
 using Random
 using Plots
@@ -43,7 +43,7 @@ mapWidth= 500
 mapHeight = 300
 townNum = 2
 traderNum = 1
-numAssets = 2
+numAssets = 2 # Can't be zero
 
 # Population dynamics variables
 rN = 0.01
@@ -152,7 +152,7 @@ end
 #------------------------------------------------------------------------------------------
 #--------------------------------------- Run Code -----------------------------------------
 #------------------------------------------------------------------------------------------
-simDuration = 6
+simDuration = 3
 
 townList, links, distanceMatrix, pathDistances = generateWorldMapNetwork(townNum, mapWidth, mapHeight, simDuration)
 traderList = instantiateTraders(townList, traderNum)

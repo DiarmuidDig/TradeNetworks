@@ -19,7 +19,10 @@ function generateTownHistoryStorageObj(townList, delayLength, simDuration)
 
         # Population
         townHistories[i][1][1:delayLength] .= townList[i]["population"]
-        println(townHistories[i][1])
+        for j in range(1, numAssets)
+            townHistories[i][2][j,1:delayLength] .= townList[i]["prodRates"][j]
+        end
+            println(townHistories[i])
     end
 
 end
