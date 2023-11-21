@@ -16,14 +16,25 @@
 
 
 # End of day wrap-up:
-#= Storage object almost up and running, just set the delay buffer for the production rates
-and go up the chain to return it into the active simulation scope from inside the worldgen
-function. After that integrate it into the recording functions, then plotting, and remove all
-history stuff from the towns themselves, then
+#= Storage object almost up and running, just go up the chain to return it into the active
+simulation scope from inside the worldgen function. After that integrate it into the recording
+functions, then plotting, and remove all history stuff from the towns themselves, then
 we're good to go and get back to work on the main stuff! (which is the town update maths and
-then trader behaviour). It's also very worth adding all this to the docs at some stage (the
-world gen stack has been updated with the generate storage object step, how the storage object
-works, all that stuff) =#
+then trader behaviour, with general performance chekcs and imprrovements when I can). It's also
+very worth adding all this to the docs at some stage (the world gen stack has been updated with
+the generate storage object step, how the storage object works, all that stuff) =#
+
+#= Actually I'd like to come up with a storage system for the trader histories as well. Storing
+it all on the trader isn't as bad as the town since for now the trader objects aren't really
+passed around at all but it could get to the point that it would be faster to store them separately
+once trade starts kicking in. It could also just be more organised to have all the storage in one
+place. If I do this, do more or less the same as with the town storage and move them all to one
+script (the trader storage objects will probably be a bit more complicated than the town ones).
+I don't think it needs to be done now but I would like to do it eventually. =#
+
+#= Also fyi I don't have a clue hwat's causing that array must be nonempty error. I'll have a
+better idea once I start passing the tick count around and I can see when it happens, if it's on
+the first frame I might have a few ideas for what it could be. =#
 
 using Random
 using Plots
@@ -44,11 +55,13 @@ mapHeight = 300
 townNum = 2
 traderNum = 1
 numAssets = 2 # Can't be zero
+simDuration = 3
+
 
 # Population dynamics variables
 rN = 0.01
 maxrP = 0.3
-delayLength = 3
+delayLength = 4
 
 maxInitPopulation = 400.0
 maxProdRatePerPerson = 10.0
@@ -152,7 +165,6 @@ end
 #------------------------------------------------------------------------------------------
 #--------------------------------------- Run Code -----------------------------------------
 #------------------------------------------------------------------------------------------
-simDuration = 3
 
 townList, links, distanceMatrix, pathDistances = generateWorldMapNetwork(townNum, mapWidth, mapHeight, simDuration)
 traderList = instantiateTraders(townList, traderNum)
