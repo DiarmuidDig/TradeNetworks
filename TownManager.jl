@@ -18,7 +18,7 @@ function generateTownHistoryStorageObj(townList, delayLength, simDuration)
     # Way the fuck more complicated than it should be
     townHistories = [storageTemplate for i in range(1, length(townList))]
     println(townHistories)
-    townHistories[1][1][1]=1
+    townHistories[2][1][1]=1
     #println(townHistories[1][1])
     #println(townHistories[2][1])
     println(townHistories)
@@ -28,11 +28,17 @@ function generateTownHistoryStorageObj(townList, delayLength, simDuration)
     # Loop below commented to not have to pass a full townlist by swapping back to the main file
     test = [ [[0 0 0 0], [0 0 0 0; 0 0 0 0]], [[0 0 0 0], [0 0 0 0; 0 0 0 0]] ]
     println(test)
-    test[1][1][1]=1
+    test[2][1][1]=1
     #println(test[1][1][1])
     println(test)
 
-
+    testTemplate = [[0,0], [0,0]]
+    test2 = [testTemplate for i in range(1,3)]
+    println(test2)
+    test2[1][1][1] = 1
+    println(test2)
+    
+    # Ah okay I get it, it's something about how list comprehension works.
     #= What. The. Fuck. Is. happening. I can't see any reason for the townHistory bit to assign to both
     population histories at all, let alone when it isn't doing that for the test. The test vector set up 
     should be identical to the storage and it's still happening so I really don't have a clue. My best
