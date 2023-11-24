@@ -52,7 +52,7 @@ include("GraphicsStuff.jl")
 # General system config
 mapWidth= 500
 mapHeight = 300
-townNum = 2
+townNum = 4
 traderNum = 1
 numAssets = 2 # Can't be zero
 simDuration = 3
@@ -61,7 +61,7 @@ simDuration = 3
 # Population dynamics variables
 rN = 0.01
 maxrP = 0.3
-delayLength = 4
+delayLength = 1
 
 maxInitPopulation = 400.0
 maxProdRatePerPerson = 10.0

@@ -10,8 +10,6 @@ townHistory = []
 function generateTownHistoryStorageObj(townList, delayLength, simDuration)
     numAssets = length(townList[1]["prodRates"]) 
     
-    #townHistories = [storageTemplate for i in range(1, length(townList))]
-
     # This isn't an efficient way to do this but every clever trick I tried bit me on the arse
     # List comprehension made a change to one town pass to all others and not declaring the storage
     # object every loop reset every town's entry to the current one being added. Improve later
@@ -27,9 +25,8 @@ function generateTownHistoryStorageObj(townList, delayLength, simDuration)
         push!(townHistories, storageTemplate)
         #townHistories[i] = storageTemplate
     end
+
     println(townHistories)
-    #= # Test setting individual elements of the storage object because that bug was fucked
-    townHistories[2][1][7]=1
-    println(townHistories) =#
+    return townHistories
 
 end
