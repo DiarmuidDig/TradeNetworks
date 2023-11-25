@@ -166,11 +166,11 @@ end
 #--------------------------------------- Run Code -----------------------------------------
 #------------------------------------------------------------------------------------------
 
-townList, links, distanceMatrix, pathDistances = generateWorldMapNetwork(townNum, mapWidth, mapHeight, simDuration)
+townList, links, distanceMatrix, townHistories = generateWorldMapNetwork(townNum, mapWidth, mapHeight, simDuration)
 traderList = instantiateTraders(townList, traderNum)
 
 
-
+print(townHistories)
 # Have a look at the variables here, I thought I was being very functional with my design patterns but I think
 # I'm missing something about how Julia handles parameters and scope because nothing is being returned here so
 # the fact that it's still changing the outcome means something is being mutated

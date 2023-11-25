@@ -26,7 +26,7 @@ function generateTownHistoryStorageObj(townList, delayLength, simDuration)
         #townHistories[i] = storageTemplate
     end
 
-    println(townHistories)
+    #println(townHistories)
     return townHistories
 
 end

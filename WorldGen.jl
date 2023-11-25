@@ -248,5 +248,5 @@ function generateWorldMapNetwork(townNum, mapWidth, mapHeight, simDuration)
     # Convert links from binary 1 = link, 0 = no link to storing the distance between the towns (0 still = no link)
     links = addDistancesToLinks(links, distanceMatrix)
     #println(links)
-    return townList, links, distanceMatrix, 1
+    return townList, links, distanceMatrix, townHistories
 end
