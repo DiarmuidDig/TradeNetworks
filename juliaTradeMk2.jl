@@ -60,7 +60,7 @@ simDuration = 3
 # Population dynamics variables
 rN = 0.01
 maxrP = 0.3
-delayLength = 4
+delayLength = 8
 
 maxInitPopulation = 400.0
 maxProdRatePerPerson = 10.0
@@ -73,19 +73,11 @@ maxConPerPerson = 5.0
 #--------------------------------- Town Behaviour -----------------------------------------
 #------------------------------------------------------------------------------------------
 
-function recordTownProperties(town)
-    push!(town["Nhistory"], town["population"])
-    return town
-end
-
 # I think the code is running! For population updates it gives a newN value with no errors, the only
 # problem is the weirdness of the values it gives. Have a look at balance and we should be flying!
 
 # Carrying capacity functions
 function kN(Plist, Clist)
-    #println("Plist = " * string(Plist))
-    #println("Clist = " * string(Clist))
-    #println("kN list = " * string(minimum(Plist ./ Clist)))
     return minimum(Plist ./ Clist)
 end
 function kP(N, P, maxP)
@@ -94,53 +86,38 @@ end
 
 # Change in population and prod rate in one time increment
 function dPdt(town, asset)
-    #println("town = " * town)
-    #println("p history = " * town["Phistory"])
-    currentP = last(town["Phistory"])[asset]
-    delayedP = town["Phistory"][reverseind(town["Phistory"], delayLength)][asset]
-    N = last(town["Nhistory"])
-    
-    #println("currentP = " * string(currentP))
-    #println("delayedP = " * string(delayedP))
-
+    # Done in discrete variables as a holdover from a previous version that I don't feel like changing
+    currentP = town["prodRates"][asset]
+    delayedP = town["populationDelay"][asset]
+    N = town["population"]
     return town["rP"][asset] * currentP * (1-(delayedP/kP(N, currentP, town["maxProdRatesPerPerson"][asset])))
 end
 function dNdt(town)
-    
-    Plength = length(town["Phistory"])
-    #println("Plength = " * string(Plength))
-    #println("Pwidth = " * string(Pwidth))
-
-    #println("test print = " * string(town["Phistory"][Plength]))
-    #println("delayedN/kN = " * string((town["Nhistory"][reverseind(town["Nhistory"], delayLength)]/kN(last(town["Nhistory"]) * town["Phistory"][Plength], town["conRates"]))))
-    return rN * last(town["Nhistory"]) * (1 - (town["Nhistory"][reverseind(town["Nhistory"], delayLength)]/kN(last(town["Nhistory"])*town["Phistory"][Plength], town["conRates"])))
+    return rN * town["population"] * (1 - town["populationDelay"][1]) / kN(town["population"]*town["prodRates"], town["conRates"])
 end
 
-# Next steps: double check the implementation of the derivatives above, integrate into the update functions below, set the whole system running and sort any bugs
 function updateTownPopulation(town)
-    #println("nhistory = " * string(town["Nhistory"]))
-    #println("Phistory = " * string(town["Phistory"]))
-
+    # Split up over a few lines here for testing
     Nincrement = dNdt(town)
-    newN = last(town["Nhistory"]) + Nincrement
+    newN = town["population"] + Nincrement
+    town["population"] = newN
 
-    #println("newN = " * string(newN))
+    push!(town["populationDelay"], town["population"])
+    popfirst!(town["populationDelay"])
 
-    #println("N = " * string(last(town["Nhistory"])))
-    #println("Nincrement = " * string(Nincrement))
-    #println("town = " * string(town))
-
-    push!(town["Nhistory"], newN)
     return town
 end
 
-# need to figure out the push system here
 function updateTownRates(town)
     pIncrementList = [0.0 for i in range(1, numAssets)]
     for asset in range(1, numAssets)
         pIncrementList[asset] = dPdt(town, asset)
     end
-    newPList = last(town["Phistory"]) .+ pIncrementList
+    newPList = town["prodRates"] .+ pIncrementList
+    town["prodRates"] = newPList
+
+    push!(town["prodRatesDelay"], town["prodRates"])
+    popfirst!(town["prodRatesDelay"])
 
     return town
 end
@@ -184,6 +161,7 @@ function runSimulation(duration)
     for i in range(delayLength,duration+delayLength)
         tradersTick(traderList, links, townList)
         townTick(townList, i)
+        println(townList[1]["populationDelay"])
     end
 end
 

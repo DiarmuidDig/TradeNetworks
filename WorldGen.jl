@@ -21,10 +21,12 @@ function generateTownList(nTowns, mapWidth, mapHeight)
                     "y" => Random.rand(range(1,mapHeight)),
 
                     "population" => initN,
+                    "populationDelay" => [initN for i in range(1, delayLength)],
                     "money" => Random.rand(range(1,maxInitMoney)),
 
                     "conRates"  => Random.rand(range(0.5,maxConPerPerson), numAssets),
                     "prodRates" => initP,
+                    "prodRatesDelay" => [initP for i in range(1, delayLength)],
 
                     "rP" => Random.rand(range(0.01,maxrP), numAssets),
                     "maxProdRatesPerPerson" => [Random.rand(range(initP[i], maxProdRatePerPerson)) for i in 1:numAssets],
