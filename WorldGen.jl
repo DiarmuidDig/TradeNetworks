@@ -29,9 +29,7 @@ function generateTownList(nTowns, mapWidth, mapHeight)
                     "rP" => Random.rand(range(0.01,maxrP), numAssets),
                     "maxProdRatesPerPerson" => [Random.rand(range(initP[i], maxProdRatePerPerson)) for i in 1:numAssets],
                     #"maxAbsoluteProdRates" => Random.rand(range(1.0, maxAbsoluteProdRate), numAssets),
-                    
-                    "Nhistory" => [initN for i in 1:delayLength],
-                    "Phistory" => [initP for i in 1:delayLength])
+                    )
         push!(townList, town)
         #print(town)
     end

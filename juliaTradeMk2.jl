@@ -16,8 +16,7 @@
 
 
 # End of day wrap-up:
-#= Storage object almost up and running, just go up the chain to return it into the active
-simulation scope from inside the worldgen function. After that integrate it into the recording
+#= Storage object almost up and running, just integrate it into the recording
 functions, then plotting, and remove all history stuff from the towns themselves, then
 we're good to go and get back to work on the main stuff! (which is the town update maths and
 then trader behaviour, with general performance chekcs and imprrovements when I can). It's also
@@ -61,7 +60,7 @@ simDuration = 3
 # Population dynamics variables
 rN = 0.01
 maxrP = 0.3
-delayLength = 1
+delayLength = 4
 
 maxInitPopulation = 400.0
 maxProdRatePerPerson = 10.0
@@ -130,6 +129,7 @@ function updateTownPopulation(town)
     #println("N = " * string(last(town["Nhistory"])))
     #println("Nincrement = " * string(Nincrement))
     #println("town = " * string(town))
+
     push!(town["Nhistory"], newN)
     return town
 end
@@ -141,22 +141,27 @@ function updateTownRates(town)
         pIncrementList[asset] = dPdt(town, asset)
     end
     newPList = last(town["Phistory"]) .+ pIncrementList
-    #println("oldPList = " * string(last(town["Phistory"])))
-    #println("pIncrement = " * string(pIncrementList))
-    #println("newPList = " * string(newPList))
-    push!(town["Phistory"], newPList)
-    #println("pIncrementList = " * string(pIncrementList))
-
 
     return town
 end
 
+function recordTownHistory(town, townIndex, currentTick)
+    # Record the population in the global storage object
+    townHistories[townIndex][1][currentTick] = town["population"]
+    # Set the whole column for the current tick's rates at once, less flexible but saves looping over them all
+    townHistories[townIndex][2][:,currentTick] = town["prodRates"]
 
-function townTick(townList)
-    for town in townList
+    return townHistories
+end 
+
+
+function townTick(townList, currentTick)
+    for i in range(1, length(townList))
         #town = recordTownProperties(town)
-        town = updateTownPopulation(town)
-        town = updateTownRates(town)
+        town = updateTownPopulation(townList[i])
+        town = updateTownRates(townList[i])
+
+        townHistories = recordTownHistory(townList[i], i, currentTick)
     end
     return townList
 end
@@ -176,14 +181,14 @@ print(townHistories)
 # the fact that it's still changing the outcome means something is being mutated
 
 function runSimulation(duration)
-    for i in range(1,duration)
+    for i in range(delayLength,duration+delayLength)
         tradersTick(traderList, links, townList)
-        townTick(townList)
+        townTick(townList, i)
     end
 end
 
 runSimulation(simDuration)
-
+println(townHistories)
 #drawTownHistory(townList)
 
 #generateAnimationGif(townList, links, traderList)
